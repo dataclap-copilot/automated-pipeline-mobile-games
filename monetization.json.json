@@ -1,0 +1,31 @@
+{
+  "flags": {
+    "enable_new_monetization": {
+      "description": "New in-app purchase flow",
+      "environments": {
+        "production": {
+          "percentage": 15,
+          "overrides": {
+            "whitelist": ["user123", "user456"],
+            "blacklist": ["tester789"]
+          }
+        },
+        "staging": {
+          "percentage": 100
+        }
+      },
+      "rules": [
+        {
+          "condition": "player.level > 10",
+          "value": true
+        },
+        {
+          "condition": "player.region == 'JP'",
+          "value": false
+        }
+      ]
+    }
+  },
+  "version": "1.2.0",
+  "salt": "game-monetization-2024"
+}

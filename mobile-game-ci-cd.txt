@@ -1,0 +1,46 @@
+mobile-game-ci-cd/
+│
+├── README.md                      # Overview with architecture diagrams
+├── LICENSE                        # MIT License
+│
+├── pipelines/                     # Pipeline configurations
+│   ├── unity/                     # Unity-specific pipelines
+│   │   ├── android/
+│   │   ├── ios/
+│   │   └── windows/
+│   ├── unreal-engine/             # Unreal Engine pipelines
+│   └── cross-platform/            # Shared pipelines
+│
+├── feature-flags/                 # Feature management
+│   ├── configs/                   # Flag configurations
+│   ├── evaluators/                # Custom rule implementations
+│   └── analytics/                 # Performance tracking
+│
+├── dependency-management/         # Shared asset handling
+│   ├── artifact-registry/         # Game asset storage
+│   ├── version-resolver/          # Cross-platform versioning
+│   └── cache-optimization/        # Build caching strategies
+│
+├── test-automation/               # Testing framework
+│   ├── unit-tests/                # Game logic tests
+│   ├── integration/               # System tests
+│   ├── performance/               # Load testing
+│   └── device-farm/               # Real device testing
+│
+├── deployment/                    # Release management
+│   ├── app-store/                 # Store submissions
+│   │   ├── google-play/
+│   │   ├── app-store-connect/
+│   │   └── amazon-appstore/
+│   ├── staging/                   # Beta channels
+│   └── canary/                    # Gradual rollouts
+│
+├── monitoring/                    # Live ops monitoring
+│   ├── realtime-dashboards/       # Player metrics
+│   ├── error-tracking/            # Crash analytics
+│   └── a-b-testing/               # Experiment results
+│
+└── tools/                         # Custom tooling
+    ├── build-optimizer/           # Parallel build tools
+    ├── asset-processor/           # Automated asset pipeline
+    └── patch-generator/           # Delta update creator

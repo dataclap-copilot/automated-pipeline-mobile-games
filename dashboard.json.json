@@ -1,0 +1,43 @@
+{
+  "title": "Monetization A/B Test Results",
+  "panels": [
+    {
+      "title": "Conversion Rate Comparison",
+      "type": "barchart",
+      "targets": [
+        {
+          "query": "SELECT variant, COUNT() as conversions FROM purchases WHERE time > NOW() - 7d GROUP BY variant",
+          "legend": "Variant {{variant}}"
+        }
+      ]
+    },
+    {
+      "title": "Revenue Per User",
+      "type": "timeseries",
+      "targets": [
+        {
+          "query": "SELECT time, SUM(amount)/COUNT(DISTINCT user_id) as arpu FROM purchases WHERE variant='A' GROUP BY time",
+          "legend": "Variant A"
+        },
+        {
+          "query": "SELECT time, SUM(amount)/COUNT(DISTINCT user_id) as arpu FROM purchases WHERE variant='B' GROUP BY time",
+          "legend": "Variant B"
+        }
+      ]
+    },
+    {
+      "title": "Statistical Significance",
+      "type": "stat",
+      "targets": [
+        {
+          "query": "SELECT p_value FROM ab_test_results WHERE test_id='monetization_2024_03'",
+          "format": "scientific",
+          "thresholds": {
+            "critical": 0.05,
+            "warning": 0.1
+          }
+        }
+      ]
+    }
+  ]
+}

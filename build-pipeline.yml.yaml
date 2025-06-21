@@ -1,0 +1,68 @@
+name: Unity Android Build Pipeline
+
+variables:
+  UNITY_VERSION: 2022.3.11f1
+  BUILD_TARGET: Android
+  ARTIFACT_REGISTRY: gcr.io/game-assets
+
+stages:
+- stage: Build
+  displayName: Build Android APK
+  jobs:
+  - job: Build
+    steps:
+    - task: UnityBuildTask@3
+      inputs:
+        unityVersion: $(UNITY_VERSION)
+        buildTarget: $(BUILD_TARGET)
+        customParameters: '-batchmode -quit -nographics -executeMethod BuildScript.PerformBuild'
+    
+    - script: |
+        # Optimize APK size
+        python3 tools/build-optimizer/optimize_apk.py \
+          --input $(Build.ArtifactStagingDirectory)/game.apk \
+          --output $(Build.ArtifactStagingDirectory)/game-optimized.apk
+      displayName: Optimize APK
+
+    - task: GoogleCloudBuild@0
+      inputs:
+        registry: $(ARTIFACT_REGISTRY)
+        imageName: 'game-android:$(Build.BuildNumber)'
+        dockerFile: 'pipelines/unity/android/Dockerfile'
+
+- stage: Test
+  dependsOn: Build
+  jobs:
+  - job: AutomatedTests
+    strategy:
+      matrix:
+        deviceType:
+          - 'pixel6'
+          - 'galaxy-s22'
+          - 'tablet-hd'
+    steps:
+    - script: |
+        adb install $(Pipeline.Workspace)/game-optimized.apk
+        pytest test-automation/integration/android/ \
+          --device $(deviceType) \
+          --build $(Build.BuildNumber)
+      displayName: Run on $(deviceType))
+
+- stage: Deploy
+  dependsOn: Test
+  condition: succeeded()
+  jobs:
+  - job: CanaryRelease
+    steps:
+    - task: FeatureFlagCheck@2
+      inputs:
+        flagName: 'enable_new_monetization'
+        percentRollout: 15
+    
+    - task: GooglePlayRelease@4
+      inputs:
+        serviceAccountKey: $(GCP_KEY)
+        packageName: 'com.company.game'
+        apkFile: $(Build.ArtifactStagingDirectory)/game-optimized.apk
+        track: 'canary'
+        userFraction: 0.15
