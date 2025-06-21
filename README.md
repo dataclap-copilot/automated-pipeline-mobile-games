@@ -5,7 +5,7 @@ A production-grade, scalable CI/CD framework designed for Unity and Unreal Engin
 ---
 
 ## 📦 Repository Structure
-
+```bash
 mobile-game-ci-cd/
 ├── README.md # Overview 
 
@@ -45,7 +45,7 @@ mobile-game-ci-cd/
 ├── asset-processor/ # Optimize and compress game assets
 └── patch-generator/ # Generate delta updates for hotfixes
 
-
+```
 
 ---
 
